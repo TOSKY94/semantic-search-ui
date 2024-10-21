@@ -4,144 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Tester</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .endpoint {
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-        }
-        button {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-        }
-        pre {
-            background: #f4f4f4;
-            padding: 10px;
-            border: 1px solid #ccc;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-    </style>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>API Tester for Semantic Search Endpoints</h1>
+    <div class="container">
+        <h1 class="text-center my-4">API Tester for Semantic Search Endpoints</h1>
+        <div class="d-flex justify-content-between mb-4">
+            <a href="#" onclick="showAPIPage(); return false;" class="text-decoration-none">Home</a>
+            <a href="#" onclick="showDocumentation(); return false;" class="text-decoration-none">Documentation</a>
+        </div>
 
-    <!-- Add Text Endpoint -->
-    <div class="endpoint">
-        <h2>Add Text</h2>
-        <label for="addText">Enter Text:</label>
-        <textarea id="addText" rows="6" placeholder="Enter large text..."></textarea>
+        <!-- Add Text Endpoint -->
+        <div class="endpoint card shadow-sm mb-4 p-4">
+            <h2>Add Text</h2>
+            <div class="mb-3">
+                <label for="addText" class="form-label">Enter Text:</label>
+                <textarea id="addText" rows="4" class="form-control" placeholder="Enter large text..."></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="sessionId" class="form-label">Session ID:</label>
+                <input type="text" id="sessionId" class="form-control" placeholder="Session ID">
+            </div>
+            <button class="btn btn-primary" id="addTextButton" onclick="callAddText()">Submit Text</button>
+            <div id="addTextFeedback" class="mt-3"></div>
+            <pre id="addTextResponse" class="mt-2 bg-light p-3 rounded"></pre>
+        </div>
 
-        <label for="sessionId">Session ID:</label>
-        <input type="text" id="sessionId" placeholder="Session ID">
+        <!-- Search Text Endpoint -->
+        <div class="endpoint card shadow-sm mb-4 p-4">
+            <h2>Search Text</h2>
+            <div class="mb-3">
+                <label for="searchQuery" class="form-label">Search Query:</label>
+                <input type="text" id="searchQuery" class="form-control" placeholder="Enter query text">
+            </div>
+            <div class="mb-3">
+                <label for="searchSessionId" class="form-label">Session ID:</label>
+                <input type="text" id="searchSessionId" class="form-control" placeholder="Session ID">
+            </div>
+            <div class="mb-3">
+                <label for="limit" class="form-label">Result Limit: <span id="limitValue">5</span></label>
+                <input type="range" id="limit" class="form-range" min="1" max="10" value="5" oninput="document.getElementById('limitValue').textContent = this.value">
+            </div>
+            <div class="mb-3">
+                <label for="baseSimilarity" class="form-label">Base Similarity :<span id="similarityValue">0.5</span></label>
+                <input type="range" id="baseSimilarity" class="form-range" min="0" max="1" step="0.1" value="0.5" oninput="document.getElementById('similarityValue').textContent = this.value">
+            </div>
+            <button class="btn btn-primary" id="searchButton" onclick="callSearchText()">Search</button>
+            <div id="searchFeedback" class="mt-3"></div>
+            <pre id="searchResponse" class="mt-2 bg-light p-3 rounded"></pre>
+        </div>
 
-        <button onclick="callAddText()">Submit Text</button>
-        <pre id="addTextResponse"></pre>
-    </div>
+        <!-- Healthcheck Endpoint -->
+        <div class="endpoint card shadow-sm mb-4 p-4">
+            <h2>Healthcheck</h2>
+            <button class="btn btn-success" id="healthcheckButton" onclick="callHealthcheck()">Check Health</button>
+            <div id="healthFeedback" class="mt-3"></div>
+            <pre id="healthcheckResponse" class="mt-2 bg-light p-3 rounded"></pre>
+        </div>
 
-    <!-- Search Text Endpoint -->
-    <div class="endpoint">
-        <h2>Search Text</h2>
-        <label for="searchQuery">Search Query:</label>
-        <input type="text" id="searchQuery" placeholder="Enter query text">
 
-        <label for="searchSessionId">Session ID:</label>
-        <input type="text" id="searchSessionId" placeholder="Session ID">
+        <!-- API Documentation -->
+        <div class="card shadow-sm mb-4 p-4 d-none" id="documentation">
+            <h2>API Documentation</h2>
+            <p>This API tester allows you to interact with semantic search API endpoints. Below are details of each endpoint and their respective parameters:</p>
 
-        <label for="limit">Result Limit:</label>
-        <input type="number" id="limit" placeholder="Limit (e.g. 5)" value="5">
+            <h3 class="mt-3">1. Add Text Endpoint</h3>
+            <p><strong>Endpoint:</strong> <code>/api/text</code> (POST)</p>
+            <p><strong>Purpose:</strong> Adds a large body of text to a session for semantic search.</p>
+            <p><strong>Parameters:</strong></p>
+            <ul>
+                <li><code>session_id</code> (String): A unique identifier for the session.</li>
+                <li><code>text</code> (String): The large text content to add to the session.</li>
+            </ul>
+            <p><strong>Example Request Payload:</strong></p>
+            <pre class="bg-light p-3 rounded">
+{
+"session_id": "your-session-id",
+"text": "This is the text you want to add..."
+}
+            </pre>
+            <p><strong>Response:</strong> JSON response indicating success or error.</p>
+            <pre class="bg-light p-3 rounded">
+{
+    "status": "success",
+    "message": "Text stored successfully",
+    "data": {
+    "chunks_stored": 10
+    }
+}
+            </pre>
+            <h3 class="mt-3">2. Search Text Endpoint</h3>
+            <p><strong>Endpoint:</strong> <code>/api/search</code> (POST)</p>
+            <p><strong>Purpose:</strong> Searches for similar text within a session.</p>
+            <p><strong>Parameters:</strong></p>
+            <ul>
+                <li><code>session_id</code> (String): A unique identifier for the session.</li>
+                <li><code>query</code> (String): The search query text.</li>
+                <li><code>limit</code> (Number): The number of results to return (between 1 and 10).</li>
+                <li><code>base_similarity</code> (Number): The similarity threshold (between 0.0 and 1.0).</li>
+            </ul>
+            <p><strong>Example Request Payload:</strong></p>
+            <pre class="bg-light p-3 rounded">
+{
+"session_id": "your-session-id",
+"query": "search terms...",
+"limit": 5,
+"base_similarity": 0.7
+}
+            </pre>
+            <p><strong>Response:</strong> JSON array of results.</p>
+            <pre class="bg-light p-3 rounded">
+{
+    "status": "success",
+    "message": "Search results returned successfully",
+    "data": {
+    "query": "string",
+    "top_results": [
+            {
+            "chunk": "string",
+            "similarity_score": 0.89
+            }
+        ]
+    }
+}
+            </pre>
+            <h3 class="mt-3">3. Healthcheck Endpoint</h3>
+            <p><strong>Endpoint:</strong> <code>/api/healthcheck</code> (GET)</p>
+            <p><strong>Purpose:</strong> Performs a health check on the server.</p>
+            <p><strong>Response:</strong> Text response indicating server status (e.g., <code>"Healthy"</code>).</p>
+        </div>
 
-        <button onclick="callSearchText()">Search</button>
-        <pre id="searchResponse"></pre>
-    </div>
-
-    <!-- Healthcheck Endpoint -->
-    <div class="endpoint">
-        <h2>Healthcheck</h2>
-        <button onclick="callHealthcheck()">Check Health</button>
-        <pre id="healthcheckResponse"></pre>
-    </div>
-
-    <script>
-        const baseUrl = 'https://semantic-search-ai.azurewebsites.net/api';
-
-        // Add Text Endpoint
-        function callAddText() {
-            const text = document.getElementById('addText').value;
-            const sessionId = document.getElementById('sessionId').value;
-
-            const payload = {
-                session_id: sessionId,
-                text: text
-            };
-
-            fetch(`${baseUrl}/text`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('addTextResponse').textContent = JSON.stringify(data, null, 2);
-            })
-            .catch(error => {
-                document.getElementById('addTextResponse').textContent = `Error: ${error}`;
-            });
-        }
-
-        // Search Text Endpoint
-        function callSearchText() {
-            const query = document.getElementById('searchQuery').value;
-            const sessionId = document.getElementById('searchSessionId').value;
-            const limit = document.getElementById('limit').value;
-
-            const payload = {
-                query: query,
-                session_id: sessionId,
-                limit: parseInt(limit),
-                base_similarity: 0.5
-            };
-
-            console.log(payload);
-
-            fetch(`${baseUrl}/search`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('searchResponse').textContent = JSON.stringify(data, null, 2);
-            })
-            .catch(error => {
-                document.getElementById('searchResponse').textContent = `Error: ${error}`;
-            });
-        }
-
-        // Healthcheck Endpoint
-        function callHealthcheck() {
-            fetch(`${baseUrl}/healthcheck`)
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('healthcheckResponse').textContent = data;
-            })
-            .catch(error => {
-                document.getElementById('healthcheckResponse').textContent = `Error: ${error}`;
-            });
-        }
-    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
